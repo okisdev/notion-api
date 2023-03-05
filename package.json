@@ -12,7 +12,7 @@
     "tiny-request-router": "^1.2.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^2.0.0",
+    "@cloudflare/workers-types": "^4.0.0",
     "@types/node": "^18.0.0",
     "prettier": "^2.0.5",
     "ts-loader": "^8.0.1",
