@@ -4,8 +4,6 @@
 A **serverless wrapper** for the private Notion API. It provides fast and easy access to your Notion content.
 Ideal to make Notion your CMS.
 
-We provide a hosted version of this project on [`https://notion-api.splitbee.io`](https://notion-api.splitbee.io/). You can also [host it yourself](https://workers.cloudflare.com/). Cloudflare offers a generous free plan with up to 100,000 request per day.
-
 _Use with caution. This is based on the private Notion API. We can not gurantee it will stay stable._
 
 ## Features
@@ -58,16 +56,17 @@ To obtain your token, login to Notion and open your DevTools and find your cooki
 
 ## Development
 
-### Setup
-
 - Install [Wrangler](https://developers.cloudflare.com/workers/cli-wrangler/install-update)
 - Run `yarn` to install dependencies
 - Duplicate `wrangler.example.toml` and rename it to `wrangler.toml`
 - Add your Cloudflare account id to `wrangler.toml`
-- Run `wrangler dev` to start the development server
+- Add your domain to `wrangler.toml` in the `route` section
+- Run `yarn preview` to start the development server
+- Run `yarn deploy` to deploy the worker
 
 ## Credits
 
 - [Timo Lins](https://twitter.com/timolins) – Idea, Documentation
 - [Tobias Lins](https://twitter.com/linstobias) – Code
 - [Travis Fischer](https://twitter.com/transitive_bs) – Code
+- [Harry Yep](https://twitter.com/okisdev) – Modified code

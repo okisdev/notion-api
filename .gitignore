@@ -11,3 +11,6 @@
 
 # build ooutput
 dist
+
+# wrangler.toml
+wrangler.toml
