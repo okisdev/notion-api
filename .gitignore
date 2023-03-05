@@ -1,4 +1,13 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# local env files
+.env*.local
+
+# misc
+.DS_Store
+
+# build ooutput
 dist
-node_modules
-worker
-wrangler.toml

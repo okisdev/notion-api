@@ -2,10 +2,10 @@ name = "notion-api-worker"
 
 main = "src/index.ts"
 
-account_id = "YOUR-ACCOUNT-ID"
+account_id = ""
 
 workers_dev = true
 
-route = "notion-api-worker.example.com/*"
+route = "notion-api.hode.co.uk/*"
 
 compatibility_date = "2022-11-30"
