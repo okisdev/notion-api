@@ -1,14 +1,17 @@
 name: Deploy to Cloudflare Workers
 
-on: push
+on:
+  push:
+    branches:
+      - master
 
-jobs: 
+jobs:
   deploy:
     runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - uses: cloudflare/wrangler-action@1.6.0
-          with:
-            apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-            configFile: ./wrangler.toml
-            publishCommand: publish
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cloudflare/wrangler-action@1.6.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          configFile: ./wrangler.toml
+          publishCommand: publish
