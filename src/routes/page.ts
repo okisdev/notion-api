@@ -55,7 +55,9 @@ export async function pageRoute(req: HandlerRequest) {
     const pendingCollections = allBlockKeys.flatMap((blockId) => {
       const block = allBlocks[blockId];
 
-      return (block.value && block.value.type === "collection_view") ? [block.value.id] : [];
+      return block.value && block.value.type === "collection_view"
+        ? [block.value.id]
+        : [];
     });
 
     for (let b of pendingCollections) {
