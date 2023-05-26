@@ -1,6 +1,8 @@
 ![Notion API Worker](https://user-images.githubusercontent.com/1440854/79893752-cc448680-8404-11ea-8d19-e0308eb32028.png)
 ![API Version](https://badgen.net/badge/API%20Version/v1/green)
 
+> The modified version of [splitbee/notion-api-worker](https://github.com/splitbee/notion-api-worker).
+
 A **serverless wrapper** for the private Notion API. It provides fast and easy access to your Notion content.
 Ideal to make Notion your CMS.
 

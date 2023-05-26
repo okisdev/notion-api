@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "format": "prettier --write \"src/**/*.ts\" "
   },
   "dependencies": {
     "tiny-request-router": "^1.2.2"
