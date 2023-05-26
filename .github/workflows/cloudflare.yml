@@ -1,14 +1,15 @@
-name: Deploy to cloudlfare workers
+name: Deploy to Cloudlfare Workers
 
 on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Deploy to Cloudflare Workers
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js
