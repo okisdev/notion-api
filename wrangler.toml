@@ -1,0 +1,12 @@
+name = "notion-api-worker"
+
+compatibility_date = "2023-05-26"
+
+route = "notion-api.hode.co.uk/*"
+
+main = "src/index.ts"
+
+workers_dev = true
+
+
+

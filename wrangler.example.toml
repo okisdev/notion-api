@@ -1,5 +1,7 @@
 name = "notion-api-worker"
 
+compatibility_date = "2023-05-26"
+
 main = "src/index.ts"
 
 account_id = "YOUR-ACCOUNT-ID"
@@ -7,5 +9,3 @@ account_id = "YOUR-ACCOUNT-ID"
 workers_dev = true
 
 route = "notion-api-worker.example.com/*"
-
-compatibility_date = "2022-11-30"

@@ -40,7 +40,7 @@ const fetchNotionData = async <T extends any>({
 };
 
 export const fetchPageById = async (pageId: string, notionToken?: string) => {
-  const res = await fetchNotionData<LoadPageChunkData>({
+  return await fetchNotionData<LoadPageChunkData>({
     resource: "loadPageChunk",
     body: {
       pageId,
@@ -48,8 +48,6 @@ export const fetchPageById = async (pageId: string, notionToken?: string) => {
     },
     notionToken,
   });
-
-  return res;
 };
 
 const queryCollectionBody = {
@@ -79,7 +77,7 @@ export const fetchTableData = async (
   collectionViewId: string,
   notionToken?: string
 ) => {
-  const table = await fetchNotionData<CollectionData>({
+  return await fetchNotionData<CollectionData>({
     resource: "queryCollection",
     body: {
       collection: {
@@ -92,8 +90,6 @@ export const fetchTableData = async (
     },
     notionToken,
   });
-
-  return table;
 };
 
 export const fetchNotionUsers = async (
@@ -109,14 +105,13 @@ export const fetchNotionUsers = async (
   });
   if (users && users.results) {
     return users.results.map((u) => {
-      const user = {
+      return {
         id: u.value.id,
         firstName: u.value.given_name,
         lastLame: u.value.family_name,
         fullName: u.value.given_name + " " + u.value.family_name,
         profilePhoto: u.value.profile_photo,
       };
-      return user;
     });
   }
   return [];
