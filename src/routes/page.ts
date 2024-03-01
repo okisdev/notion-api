@@ -1,101 +1,82 @@
-import { fetchPageById, fetchBlocks } from "../api/notion";
-import { parsePageId } from "../api/utils";
-import { createResponse } from "../response";
-import { getTableData } from "./table";
-import { BlockType, CollectionType, HandlerRequest } from "../api/types";
+import { fetchPageById, fetchBlocks } from '../api/notion';
+import { parsePageId } from '../api/utils';
+import { createResponse } from '../response';
+import { getTableData } from './table';
+import { BlockType, CollectionType, HandlerRequest } from '../api/types';
 
 export async function pageRoute(req: HandlerRequest) {
-  const pageId = parsePageId(req.params.pageId);
-  const page = await fetchPageById(pageId!, req.notionToken);
+    const pageId = parsePageId(req.params.pageId);
+    const page = await fetchPageById(pageId!, req.notionToken);
 
-  const baseBlocks = page.recordMap.block;
+    const baseBlocks = page.recordMap.block;
 
-  let allBlocks: { [id: string]: BlockType & { collection?: any } } = {
-    ...baseBlocks,
-  };
-  let allBlockKeys;
+    let allBlocks: { [id: string]: BlockType & { collection?: any } } = {
+        ...baseBlocks,
+    };
+    let allBlockKeys;
 
-  while (true) {
-    allBlockKeys = Object.keys(allBlocks);
+    while (true) {
+        allBlockKeys = Object.keys(allBlocks);
 
-    const pendingBlocks = allBlockKeys.flatMap((blockId) => {
-      const block = allBlocks[blockId];
-      const content = block.value && block.value.content;
+        const pendingBlocks = allBlockKeys.flatMap((blockId) => {
+            const block = allBlocks[blockId];
+            const content = block.value && block.value.content;
 
-      if (!content || (block.value.type === "page" && blockId !== pageId!)) {
-        // skips pages other than the requested page
-        return [];
-      }
+            if (!content || (block.value.type === 'page' && blockId !== pageId!)) {
+                // skips pages other than the requested page
+                return [];
+            }
 
-      return content.filter((id: string) => !allBlocks[id]);
-    });
+            return content.filter((id: string) => !allBlocks[id]);
+        });
 
-    if (!pendingBlocks.length) {
-      break;
+        if (!pendingBlocks.length) {
+            break;
+        }
+
+        const newBlocks = await fetchBlocks(pendingBlocks, req.notionToken).then((res) => res.recordMap.block);
+
+        allBlocks = { ...allBlocks, ...newBlocks };
     }
 
-    const newBlocks = await fetchBlocks(pendingBlocks, req.notionToken).then(
-      (res) => res.recordMap.block
-    );
+    const collection = page.recordMap.collection ? page.recordMap.collection[Object.keys(page.recordMap.collection)[0]] : null;
 
-    allBlocks = { ...allBlocks, ...newBlocks };
-  }
+    const collectionView = page.recordMap.collection_view ? page.recordMap.collection_view[Object.keys(page.recordMap.collection_view)[0]] : null;
 
-  const collection = page.recordMap.collection
-    ? page.recordMap.collection[Object.keys(page.recordMap.collection)[0]]
-    : null;
+    if (collection && collectionView) {
+        const pendingCollections = allBlockKeys.flatMap((blockId) => {
+            const block = allBlocks[blockId];
 
-  const collectionView = page.recordMap.collection_view
-    ? page.recordMap.collection_view[
-        Object.keys(page.recordMap.collection_view)[0]
-      ]
-    : null;
+            return block.value && block.value.type === 'collection_view' ? [block.value.id] : [];
+        });
 
-  if (collection && collectionView) {
-    const pendingCollections = allBlockKeys.flatMap((blockId) => {
-      const block = allBlocks[blockId];
+        for (let b of pendingCollections) {
+            const collPage = await fetchPageById(b!, req.notionToken);
 
-      return block.value && block.value.type === "collection_view"
-        ? [block.value.id]
-        : [];
-    });
+            const coll = Object.keys(collPage.recordMap.collection).map((k) => collPage.recordMap.collection[k])[0];
 
-    for (let b of pendingCollections) {
-      const collPage = await fetchPageById(b!, req.notionToken);
+            const collView: {
+                value: { id: CollectionType['value']['id'] };
+            } = Object.keys(collPage.recordMap.collection_view).map((k) => collPage.recordMap.collection_view[k])[0];
 
-      const coll = Object.keys(collPage.recordMap.collection).map(
-        (k) => collPage.recordMap.collection[k]
-      )[0];
+            const { rows, schema } = await getTableData(coll, collView.value.id, req.notionToken, true);
 
-      const collView: {
-        value: { id: CollectionType["value"]["id"] };
-      } = Object.keys(collPage.recordMap.collection_view).map(
-        (k) => collPage.recordMap.collection_view[k]
-      )[0];
+            const viewIds = (allBlocks[b] as any).value.view_ids as string[];
 
-      const { rows, schema } = await getTableData(
-        coll,
-        collView.value.id,
-        req.notionToken,
-        true
-      );
-
-      const viewIds = (allBlocks[b] as any).value.view_ids as string[];
-
-      allBlocks[b] = {
-        ...allBlocks[b],
-        collection: {
-          title: coll.value.name,
-          schema,
-          types: viewIds.map((id) => {
-            const col = collPage.recordMap.collection_view[id];
-            return col ? col.value : undefined;
-          }),
-          data: rows,
-        },
-      };
+            allBlocks[b] = {
+                ...allBlocks[b],
+                collection: {
+                    title: coll.value.name,
+                    schema,
+                    types: viewIds.map((id) => {
+                        const col = collPage.recordMap.collection_view[id];
+                        return col ? col.value : undefined;
+                    }),
+                    data: rows,
+                },
+            };
+        }
     }
-  }
 
-  return createResponse(allBlocks);
+    return createResponse(allBlocks);
 }

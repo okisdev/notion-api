@@ -7,6 +7,3 @@ route = "notion-api.hode.co.uk/*"
 main = "src/index.ts"
 
 workers_dev = true
-
-
-
